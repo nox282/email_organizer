@@ -5,7 +5,18 @@
     <artifactId>EMLOrganizer</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
+    <repositories>
+        <repository>
+            <id>swt-repo</id>
+            <url>https://raw.githubusercontent.com/maven-eclipse/swt-repo/master/</url>
+        </repository>
+    </repositories>
     <dependencies>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+            <version>4.4</version>
+        </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>

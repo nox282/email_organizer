@@ -1,9 +1,14 @@
 package emlorg.ui;
 
+import emlorg.email.Email;
 import emlorg.email.EmailFactory;
 import emlorg.utils.EmailFormatter;
-import emlorg.utils.EmailReader;
+import emlorg.utils.EmailInterface;
 import java.io.File;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.mail.MessagingException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.MessageBox;
 
 public class MainUI {
     private static MainUI instance;
@@ -155,8 +161,43 @@ public class MainUI {
         goButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e){
-                String format = processCheckboxes(checkDate.getSelection(), checkSeconds.getSelection(), checkName.getSelection(), checkSubject.getSelection());
-                execute(email.getText(), files, destinationPath);
+                String emailInput = email.getText();
+                Pattern p = Pattern.compile("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
+                Matcher m = p.matcher(emailInput);
+                if(!m.matches()){
+                    MessageBox dialog = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+                    dialog.setText("Error");
+                    dialog.setMessage("Please enter a valid email adress");
+                    dialog.open();
+                } else {
+                    EmailFormatter emlFormatter = new EmailFormatter(checkDate.getSelection(),
+                                                checkSeconds.getSelection(), checkName.getSelection(), checkSubject.getSelection());
+                    emlFormatter.setUserEmail(email.getText());
+                    try {
+                        execute(email.getText(), files, destinationPath, emlFormatter);
+                    } catch (MessagingException ex) {
+                        MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+                        dialog.setText("Error");
+                        dialog.setMessage("Error : Coulnd't read email\n" + ex.getLocalizedMessage());
+                        dialog.open();
+                        return;
+                    } catch (IOException ex) {
+                        MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+                        dialog.setText("Error");
+                        dialog.setMessage("Error : Coulnd't read file\n" + ex.getLocalizedMessage());
+                        dialog.open();
+                        return;
+                    } catch (NullPointerException ex){
+                        MessageBox dialog = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+                        dialog.setText("Error");
+                        dialog.setMessage("Please fill out the appropriate fields.");
+                        dialog.open();
+                        return;
+                    }
+                    MessageBox dialog = new MessageBox(shell, SWT.OK);
+                    dialog.setMessage("Done!");
+                    dialog.open();
+                }
             }
         });
 
@@ -170,14 +211,7 @@ public class MainUI {
         
     }
     
-    private String processCheckboxes(boolean date, boolean seconds, boolean name, boolean subject){
-        String ret = "";
-        if(date) ret += "Date";
-        if(seconds) ret += ":seconds";
-        if(name) ret += " From:name";
-        if(subject) ret +=" subject";
-        return ret;
-    }
+    //############################################HELPER########################
     
     private File[] filesSelector(Shell shell){
         FileDialog dialog = new FileDialog(shell, SWT.MULTI);
@@ -206,21 +240,21 @@ public class MainUI {
         return dialog.open();
     }
     
-    private void displayFileList(){
-        
-    }
+    //######################################################EXECUTION###########
     
-    private void execute(String email, File[] files, String destPath){
-        EmailReader emailReader = EmailReader.getInstance();
+    private void execute(String email, File[] files, String destPath, EmailFormatter emailFormatter) throws MessagingException, IOException{
+        EmailInterface emailInterface = EmailInterface.getInstance();
         EmailFactory emailFactory = EmailFactory.getInstance();
-        EmailFormatter emailFormatter = new EmailFormatter("");
-        
+        String fileName = "";
         for(File file: files){
-            
+            fileName = executeOneFile(file, emailInterface, emailFactory, emailFormatter);
+            fileName = destPath + "/" + fileName;
+            emailInterface.copyMail(file.getAbsolutePath(), fileName);
         }
     }
     
-    private void executeOneFile(File file, EmailReader emlReader, EmailFactory emlFactory){
-
+    private String executeOneFile(File file, EmailInterface emlInterface, EmailFactory emlFactory, EmailFormatter emlFormatter) throws MessagingException, IOException{
+        Email eml = emlFactory.construct(emlInterface.parseMail(file.getAbsolutePath()));
+        return eml.toString(emlFormatter);
     }
 }

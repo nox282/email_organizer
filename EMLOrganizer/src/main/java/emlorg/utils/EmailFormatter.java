@@ -1,64 +1,70 @@
 package emlorg.utils;
 
 import emlorg.email.Email;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.HashMap;
 
 public class EmailFormatter {
-    private String keywords[] = {"date", "from", "to", "subject"};
-    private String displayName = "name";
-    private String displayEmail = "email";
-    private String[] formats;
+    private String[] keywords = {"date", "seconds", "name", "subject"};
+    private HashMap<String, Boolean> format;
+    private String userEmail;
+    private DateTimeFormatter dateSecondLess;
+    private DateTimeFormatter dateSecondFull;
     
-    public EmailFormatter(String format){
-        format = format.toLowerCase();
-        validateFormat(format);
-        this.formats = format.split(" ");
-    }
     
-    private void validateFormat(String format){
-        boolean valid = false;
-        for (String keyword : keywords)
-            valid = valid || format.contains(keyword);
-        
-        if(!valid) throw new ClassFormatError("Invalid Formatter input");    
+    public EmailFormatter(boolean date, boolean seconds, boolean name, boolean subject){
+        format = new HashMap<>();
+        format.put("date", date);
+        format.put("seconds", seconds && date);
+        format.put("name", name);
+        format.put("subject", subject);
+        userEmail = "";
+        dateSecondFull = DateTimeFormatter.ofPattern("yyyy MM dd, HHmmss");
+        dateSecondLess = DateTimeFormatter.ofPattern("yyyy MM dd, HHmm");
     }
     
     public String formatEmail(Email email){
         String ret = "";
-        for (String format : formats) {
-            ret += formatHelper(format, email);
+        for (String keyword: keywords) {
+            ret += formatHelper(keyword, email);
         }
-        ret = ret.substring(0, ret.length()-1);
         return ret;
     }
     
     private String formatHelper(String key, Email email){
-        if(key.contains(keywords[0])) return email.getDate()+"-";
-        else if(key.contains(keywords[1])) return email.getFrom()+"-";
-        else if(key.contains(keywords[2])) return email.getTo()+"-";
-        else return email.getSubject()+"-";
+        if(key.contains(keywords[0])){
+            if(format.get(key)){
+                if(format.get(keywords[1])) return email.getDate().format(dateSecondFull) + "-";
+                else return email.getDate().format(dateSecondLess) + "-";
+            }
+        }
+        else if(key.contains(keywords[2])){
+            if(format.get(key)){
+                if(email.getFromEmail() == userEmail) return "A "+email.getTo()+ "-";
+                else return "De "+email.getFrom()+ "-";
+            }
+        }
+        else if (key.contains(keywords[3])){
+            if(format.get(key))
+                return email.getSubject();
+        }
+        return "";
     }
     
     public void cleanUpValues(Email email){
         String from = email.getFrom();
         String to = email.getTo();
-        email.setFrom(cleanUp(from, keywords[1]));
-        email.setTo(cleanUp(to, keywords[2]));
+        
+        email.setFrom(cleanUp(from));
+        email.setTo(cleanUp(to));
     }
     
-    private String cleanUp(String s, String key){
-        String format = getFormats(key);
-        if(format.contains(displayName)) s = s.replaceAll("<.*>", "");
-        else {
-            s = s.replaceAll(".*<", "");
-            s = s.replaceAll(">", "");
-        }
+    private String cleanUp(String s){
+        s = s.replaceAll("<.*", "");
         s = s.trim();
         return s;
     }
     
-    private String getFormats(String key){
-        for(int i = 0; i < formats.length; i++)
-            if(formats[i].contains(key)) return formats[i];
-        return "";
-    }
+    public void setUserEmail(String email){userEmail = email;}
 }
