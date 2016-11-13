@@ -20,8 +20,8 @@ public class EmailFormatter {
         format.put("name", name);
         format.put("subject", subject);
         userEmail = "";
-        dateSecondFull = DateTimeFormatter.ofPattern("yyyy MM dd, HHmmss");
-        dateSecondLess = DateTimeFormatter.ofPattern("yyyy MM dd, HHmm");
+        dateSecondFull = DateTimeFormatter.ofPattern("yyyy MM dd.HHmmss");
+        dateSecondLess = DateTimeFormatter.ofPattern("yyyy MM dd.HHmm");
     }
     
     public String formatEmail(Email email){

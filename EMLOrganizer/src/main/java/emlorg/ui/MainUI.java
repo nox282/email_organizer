@@ -4,6 +4,7 @@ import emlorg.email.Email;
 import emlorg.email.EmailFactory;
 import emlorg.utils.EmailFormatter;
 import emlorg.utils.EmailInterface;
+import emlorg.utils.State;
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -35,7 +36,7 @@ public class MainUI {
     private File[] files;
     private String destinationPath;
     
-    public void mainUI(){
+    public void mainUI(State state){
         Display display = new Display();
         Shell shell = new Shell(display, SWT.TITLE | SWT.CLOSE);
         shell.setSize(500, 650);
@@ -43,7 +44,7 @@ public class MainUI {
         
         shell.setLayout(new GridLayout(2, false));
         
-        GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+        GridData data = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 3);
         
         //-------------------------------EMAIL----------------------------------
     
@@ -52,7 +53,7 @@ public class MainUI {
         label.setLayoutData(data);
         
         Text email = new Text(shell, SWT.BORDER);
-        email.setText("Enter your email adress");
+        email.setText(state.getEmail());
         email.setLayoutData(data);
         //-------------------------------SETUP LABEL----------------------------
         label = new Label(shell, SWT.NONE);
@@ -91,7 +92,7 @@ public class MainUI {
             }
         });
         //-----------------------------DESTINATION FOLDER-----------------------
-        data = new GridData(SWT.FILL, SWT.TOP, false, false, 2, 1);
+        data = new GridData(SWT.FILL, SWT.TOP, false, false, 2, 3);
         
         label = new Label(shell, SWT.NONE);
         label.setLayoutData(data);
@@ -126,12 +127,15 @@ public class MainUI {
         data.horizontalSpan = 4;
         Button checkDate = new Button(shell, SWT.CHECK);
         checkDate.setLayoutData(data);
+        checkDate.setSelection(state.isDate());
         checkDate.setText("Date");
         
         Button checkSeconds = new Button(shell, SWT.CHECK);
         checkSeconds.setLayoutData(data);
         checkSeconds.setText("Add Seconds");
-        checkSeconds.setVisible(false);
+        checkSeconds.setSelection(state.isSeconds());
+        if(state.isSeconds()) checkSeconds.setVisible(true);
+        else checkSeconds.setVisible(false);
         
         checkDate.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -147,10 +151,12 @@ public class MainUI {
         
         Button checkName = new Button(shell, SWT.CHECK);
         checkName.setLayoutData(data);
+        checkName.setSelection(state.isName());
         checkName.setText("Display Name");
         
         Button checkSubject = new Button(shell, SWT.CHECK);
         checkSubject.setLayoutData(data);
+        checkSubject.setSelection(state.isSubject());
         checkSubject.setText("Subject");
         
         //-----------------------------------GO---------------------------------
@@ -203,6 +209,11 @@ public class MainUI {
 
         shell.open();
         while(!shell.isDisposed()){
+            state.setEmail(email.getText());
+            state.setDate(checkDate.getSelection());
+            state.setSeconds(checkSeconds.getSelection());
+            state.setName(checkName.getSelection());
+            state.setSubject(checkSubject.getSelection());
             if(display.readAndDispatch()){
                 display.sleep();
             }
