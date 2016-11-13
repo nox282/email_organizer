@@ -1,0 +1,3 @@
+#!/bin/sh
+DIR='dirname $0'
+java -XstartOnFirstThread -jar $DIR/EMLOrganizer.jar

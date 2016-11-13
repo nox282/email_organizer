@@ -13,6 +13,7 @@ import javax.mail.MessagingException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -44,7 +45,8 @@ public class MainUI {
         
         shell.setLayout(new GridLayout(2, false));
         
-        GridData data = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 3);
+        GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+        data.heightHint = 22;
         
         //-------------------------------EMAIL----------------------------------
     
@@ -55,6 +57,7 @@ public class MainUI {
         Text email = new Text(shell, SWT.BORDER);
         email.setText(state.getEmail());
         email.setLayoutData(data);
+
         //-------------------------------SETUP LABEL----------------------------
         label = new Label(shell, SWT.NONE);
         label.setText("Setup :");        
@@ -92,7 +95,8 @@ public class MainUI {
             }
         });
         //-----------------------------DESTINATION FOLDER-----------------------
-        data = new GridData(SWT.FILL, SWT.TOP, false, false, 2, 3);
+        data = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
+        data.heightHint = 22;
         
         label = new Label(shell, SWT.NONE);
         label.setLayoutData(data);
@@ -134,7 +138,7 @@ public class MainUI {
         checkSeconds.setLayoutData(data);
         checkSeconds.setText("Add Seconds");
         checkSeconds.setSelection(state.isSeconds());
-        if(state.isSeconds()) checkSeconds.setVisible(true);
+        if(state.isDate()) checkSeconds.setVisible(true);
         else checkSeconds.setVisible(false);
         
         checkDate.addSelectionListener(new SelectionAdapter() {
@@ -199,7 +203,13 @@ public class MainUI {
                         dialog.setMessage("Please fill out the appropriate fields.");
                         dialog.open();
                         return;
+                    } catch (Exception ex){
+                        MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+                        dialog.setText("Error");
+                        dialog.setMessage("Error : " + ex.getLocalizedMessage());
+                        dialog.open();
                     }
+                    
                     MessageBox dialog = new MessageBox(shell, SWT.OK);
                     dialog.setMessage("Done!");
                     dialog.open();
@@ -259,7 +269,7 @@ public class MainUI {
         String fileName = "";
         for(File file: files){
             fileName = executeOneFile(file, emailInterface, emailFactory, emailFormatter);
-            fileName = destPath + "/" + fileName;
+            fileName = destPath + "/" + fileName + ".eml";
             emailInterface.copyMail(file.getAbsolutePath(), fileName);
         }
     }

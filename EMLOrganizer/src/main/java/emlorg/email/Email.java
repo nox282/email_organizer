@@ -24,9 +24,7 @@ public class Email {
     }
     
     public void setDate(String date){
-        date =  date.substring(0, date.length()-5);
-        date = date.trim();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("E, d MMM yyyy HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
         this.date = LocalDateTime.parse(date, formatter);
     }
     

@@ -65,7 +65,7 @@ public class State {
     public static State getState() throws IOException{
         try{
             JsonInterface jsonReader = JsonInterface.getInstance();
-            return new State((JSONObject) jsonReader.parseJson(stateFileName));
+            return new State((JSONObject) jsonReader.parseJson("../../../"+stateFileName));
         } catch (IOException ex){
             return new State();
         }

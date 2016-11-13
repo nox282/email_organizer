@@ -2,7 +2,6 @@ package emlorg.utils;
 
 import emlorg.email.Email;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.HashMap;
 
 public class EmailFormatter {
