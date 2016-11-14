@@ -2,12 +2,16 @@ package emlorg.email;
 
 import emlorg.utils.EmailFormatter;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Email {
-    private LocalDateTime date;
+    private ZonedDateTime date;
+    private ZoneId zone;
     private String from;
     private String fromEmail;
     private String to;
@@ -23,9 +27,9 @@ public class Email {
         return formatter.formatEmail(this);
     }
     
-    public void setDate(String date){
+    public void setDate(String date ){
         DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
-        this.date = LocalDateTime.parse(date, formatter);
+        this.date = ZonedDateTime.parse(date, formatter);
     }
     
     
@@ -44,8 +48,9 @@ public class Email {
     public void setSubject(String subject) {this.subject = subject;}
     public void setFromEmail(String fromEmail) {this.fromEmail = fromEmail;}
     public void setToEmail(String toEmail) {this.toEmail = toEmail;}
+    public void setZoneId(String zone){this.zone = ZoneId.of(zone);}
 
-    public LocalDateTime getDate() {return date;}
+    public ZonedDateTime getDate() {return date.withZoneSameInstant(this.zone);}
     public String getFrom() {return from;}
     public String getTo() {return to;}
     public String getSubject() {return subject;}

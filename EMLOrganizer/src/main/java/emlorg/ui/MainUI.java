@@ -7,13 +7,13 @@ import emlorg.utils.EmailInterface;
 import emlorg.utils.State;
 import java.io.File;
 import java.io.IOException;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.mail.MessagingException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Spinner;
 
 public class MainUI {
     private static MainUI instance;
@@ -35,7 +36,6 @@ public class MainUI {
     }
     
     private File[] files;
-    private String destinationPath;
     
     public void mainUI(State state){
         Display display = new Display();
@@ -45,12 +45,24 @@ public class MainUI {
         
         shell.setLayout(new GridLayout(2, false));
         
-        GridData data = new GridData(SWT.FILL, SWT.TOP, true, false);
+        GridData data = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
         data.heightHint = 22;
+        //------------------------------TIMEZONE--------------------------------
+        Label label = new Label(shell, SWT.NONE);
+        label.setText("TimeZone");
+        label.setLayoutData(data);
+        
+        Spinner timezone = new Spinner(shell, SWT.LONG);
+        timezone.setMinimum(-1200);
+        timezone.setMaximum(1400);
+        timezone.setSelection((int) state.getTimezone());
+        timezone.setLayoutData(data);
         
         //-------------------------------EMAIL----------------------------------
-    
-        Label label = new Label(shell, SWT.NONE);
+        data = new GridData(SWT.FILL, SWT.TOP, true, false);
+        data.heightHint = 22;
+        
+        label = new Label(shell, SWT.NONE);
         label.setText("Email");
         label.setLayoutData(data);
         
@@ -104,7 +116,7 @@ public class MainUI {
         
         Text destPath = new Text(shell, SWT.BORDER);
         destPath.setLayoutData(data);
-        destPath.setText("Destination folder path.");
+        destPath.setText(state.getDestinationFolder());
         
         data = new GridData(SWT.FILL, SWT.TOP, true, false);
         data.horizontalSpan = 2;
@@ -116,8 +128,7 @@ public class MainUI {
         outputButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e){
-                destinationPath = directorySelector(shell);
-                destPath.setText(destinationPath);
+                destPath.setText(directorySelector(shell));
             }
         });
         //-------------------------TAG SELECTION--------------------------------
@@ -184,7 +195,7 @@ public class MainUI {
                                                 checkSeconds.getSelection(), checkName.getSelection(), checkSubject.getSelection());
                     emlFormatter.setUserEmail(email.getText());
                     try {
-                        execute(email.getText(), files, destinationPath, emlFormatter);
+                        execute(email.getText(), files, destPath.getText(), emlFormatter, timezone.getSelection());
                     } catch (MessagingException ex) {
                         MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
                         dialog.setText("Error");
@@ -224,6 +235,8 @@ public class MainUI {
             state.setSeconds(checkSeconds.getSelection());
             state.setName(checkName.getSelection());
             state.setSubject(checkSubject.getSelection());
+            state.setDestinationFolder(destPath.getText());
+            state.setTimezone(timezone.getSelection());
             if(display.readAndDispatch()){
                 display.sleep();
             }
@@ -263,19 +276,20 @@ public class MainUI {
     
     //######################################################EXECUTION###########
     
-    private void execute(String email, File[] files, String destPath, EmailFormatter emailFormatter) throws MessagingException, IOException{
+    private void execute(String email, File[] files, String destPath, EmailFormatter emailFormatter, int timezone) throws MessagingException, IOException{
         EmailInterface emailInterface = EmailInterface.getInstance();
         EmailFactory emailFactory = EmailFactory.getInstance();
         String fileName = "";
         for(File file: files){
-            fileName = executeOneFile(file, emailInterface, emailFactory, emailFormatter);
+            fileName = executeOneFile(file, emailInterface, emailFactory, emailFormatter, timezone);
+            fileName = fileName.replaceAll("/", "");
             fileName = destPath + "/" + fileName + ".eml";
             emailInterface.copyMail(file.getAbsolutePath(), fileName);
         }
     }
     
-    private String executeOneFile(File file, EmailInterface emlInterface, EmailFactory emlFactory, EmailFormatter emlFormatter) throws MessagingException, IOException{
-        Email eml = emlFactory.construct(emlInterface.parseMail(file.getAbsolutePath()));
+    private String executeOneFile(File file, EmailInterface emlInterface, EmailFactory emlFactory, EmailFormatter emlFormatter, int timezone) throws MessagingException, IOException{
+        Email eml = emlFactory.construct(emlInterface.parseMail(file.getAbsolutePath()), timezone);
         return eml.toString(emlFormatter);
     }
 }

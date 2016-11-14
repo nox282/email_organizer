@@ -11,12 +11,16 @@ public class State {
     private static String secondsKey = "seconds";
     private static String nameKey = "name";
     private static String subjectKey = "subject";
+    private static String destinationFolderKey = "destinationFolder";
+    private static String timezoneKey = "timezone";
     
     private String email;
     private boolean date;
     private boolean seconds;
     private boolean name;
     private boolean subject;
+    private String destinationFolder;
+    private long timezone;
     
     private State(){
         email = "Enter your email adress";
@@ -24,6 +28,8 @@ public class State {
         seconds = false;
         name = false;
         subject = false;
+        destinationFolder = "Destination folder path.";
+        timezone = 0;
     }
     
     public State (JSONObject data){
@@ -32,7 +38,8 @@ public class State {
         this.seconds = (boolean) data.get(secondsKey);
         this.name = (boolean) data.get(nameKey);
         this.subject = (boolean) data.get(subjectKey);
-        
+        this.destinationFolder = (String) data.get(destinationFolderKey);
+        this.timezone = (long) data.get(timezoneKey);
     }
     
     public void writeState() throws IOException{
@@ -47,6 +54,8 @@ public class State {
         ret.put(secondsKey, seconds);
         ret.put(nameKey, name);
         ret.put(subjectKey, subject);
+        ret.put(destinationFolderKey, destinationFolder);
+        ret.put(timezoneKey, timezone);
         return ret;
     }
 
@@ -55,12 +64,19 @@ public class State {
     public boolean isSeconds() {return seconds;}
     public boolean isName() {return name;}
     public boolean isSubject() {return subject;}
+    public String getDestinationFolder() {return destinationFolder;}
+    public long getTimezone() {return timezone;}
+    
     
     public void setEmail(String email) {this.email = email;}
     public void setDate(boolean date) {this.date = date;}
     public void setSeconds(boolean seconds) {this.seconds = seconds;}
     public void setName(boolean name) {this.name = name;}
     public void setSubject(boolean subject) {this.subject = subject;}
+    public void setDestinationFolder(String destinationFolder) {this.destinationFolder = destinationFolder;}
+    public void setTimezone(int timezone) {this.timezone = timezone;}
+
+    
     
     public static State getState() throws IOException{
         try{

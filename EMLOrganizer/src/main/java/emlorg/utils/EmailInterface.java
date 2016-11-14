@@ -32,7 +32,6 @@ public class EmailInterface {
     public void copyMail(String sourcePath, String destPath) throws IOException{
         File source = new File(sourcePath);
         File dest = new File(destPath);
-        
         FileUtils.copyFile(source, dest, true);
     }
 }
