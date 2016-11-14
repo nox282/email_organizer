@@ -84,7 +84,11 @@ public class MainUI {
         label = new Label(shell, SWT.NONE);
         label.setLayoutData(data);
         label.setText("Input files");
-      
+        
+        Label emlCount = new Label(shell, SWT.NONE);
+        emlCount.setLayoutData(data);
+        emlCount.setText("0");
+        
         List list = new List(shell, SWT.BORDER | SWT.V_SCROLL);
         data = new GridData(GridData.FILL_BOTH);
         data.heightHint = 10 * list.getItemHeight();
@@ -104,8 +108,13 @@ public class MainUI {
                 list.removeAll();
                 for(int i = 0; i < files.length; i++)
                     list.add(files[i].getName());
+                
+                emlCount.setText(Integer.toString(files.length));
             }
         });
+        
+        
+        
         //-----------------------------DESTINATION FOLDER-----------------------
         data = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
         data.heightHint = 22;
