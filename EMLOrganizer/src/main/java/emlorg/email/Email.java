@@ -1,7 +1,6 @@
 package emlorg.email;
 
 import emlorg.utils.EmailFormatter;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import java.time.format.DateTimeFormatter;

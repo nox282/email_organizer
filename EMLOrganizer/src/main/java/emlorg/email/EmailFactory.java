@@ -12,10 +12,11 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 public class EmailFactory {
-    public static String headersToBeFound[] = {"From", "Received", "To", "Subject"};
+    public static String headersToBeFound[] = {"From", "Received", "To", "Subject", "Date"};
     private static EmailFactory instance;
     
     private ArrayList<String> refHeaders;
+    private HashMap<String, String> values;
     
     public static EmailFactory getInstance(){
         if(instance == null) instance = new EmailFactory();
@@ -23,8 +24,8 @@ public class EmailFactory {
     }
     
     public Email construct(MimeMessage message, int timezone) throws MessagingException{
-        HashMap<String, String> values = extractFromSource(message);
-        return instantiateEmail(values, timezone);
+        this.values = extractFromSource(message);
+        return instantiateEmail(timezone);
     }
     
     
@@ -46,20 +47,19 @@ public class EmailFactory {
     }
     
     private String extractDate(String value){
-        Pattern p = Pattern.compile("((Mon)|(Tue)|(Wed)|(Thu)|(Fri)|(Sat)|(Sun))\\,\\s\\d\\s((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\\s\\d{4}\\s\\d{2}\\:\\d{2}\\:\\d{2}\\s\\-\\d{4}");
+        Pattern p = Pattern.compile("((Mon)|(Tue)|(Wed)|(Thu)|(Fri)|(Sat)|(Sun))\\,\\s(\\d|\\d{2})\\s((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\\s\\d{4}\\s\\d{2}\\:\\d{2}\\:\\d{2}\\s(\\-|\\+)\\d{4}");
         Matcher m = p.matcher(value);
         if(m.find()) return m.group(0);
         else return "";
     }
-    private Email instantiateEmail(HashMap<String, String> values, int timezone){
+    private Email instantiateEmail(int timezone){
         Email email = new Email();
-        for(Iterator it = values.entrySet().iterator(); it.hasNext();){
+        for(Iterator it = this.values.entrySet().iterator(); it.hasNext();){
             Map.Entry pair = (Map.Entry) it.next();
-            email = setEmailValues((String)pair.getKey(), (String)pair.getValue(), email);
+            email = setEmailvalues((String)pair.getKey(), (String)pair.getValue(), email);
         }
         
         email.setZoneId(setTimeZone(timezone));
-        
         return email;
     }
     
@@ -70,11 +70,14 @@ public class EmailFactory {
         return zone;
     }
     
-    private Email setEmailValues(String key, String Value, Email email){
-        if(key.equals(headersToBeFound[0])) email.setFrom(Value);
-        else if(key.equals(headersToBeFound[1])) email.setDate(Value);
-        else if(key.equals(headersToBeFound[2])) email.setTo(Value);
-        else if(key.equals(headersToBeFound[3])) email.setSubject(Value);
+    private Email setEmailvalues(String key, String value, Email email){
+        if(key.equals(headersToBeFound[0])) email.setFrom(value);
+        else if(key.equals(headersToBeFound[1])) email.setDate(value);
+        else if(key.equals(headersToBeFound[2])) email.setTo(value);
+        else if(key.equals(headersToBeFound[3])) email.setSubject(value);
+        else if(key.equals(headersToBeFound[4])){
+            if(!this.values.containsKey(headersToBeFound[1])) email.setDate(value);
+        }
         return email;
     }
     

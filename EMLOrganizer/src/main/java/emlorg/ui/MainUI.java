@@ -200,25 +200,30 @@ public class MainUI {
                         MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
                         dialog.setText("Error");
                         dialog.setMessage("Error : Coulnd't read email\n" + ex.getLocalizedMessage());
+                        ex.printStackTrace();
                         dialog.open();
                         return;
                     } catch (IOException ex) {
                         MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
                         dialog.setText("Error");
                         dialog.setMessage("Error : Coulnd't read file\n" + ex.getLocalizedMessage());
+                        ex.printStackTrace();
                         dialog.open();
                         return;
                     } catch (NullPointerException ex){
                         MessageBox dialog = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
                         dialog.setText("Error");
                         dialog.setMessage("Please fill out the appropriate fields.");
+                        ex.printStackTrace();
                         dialog.open();
                         return;
                     } catch (Exception ex){
                         MessageBox dialog = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
                         dialog.setText("Error");
                         dialog.setMessage("Error : " + ex.getLocalizedMessage());
+                        ex.printStackTrace();
                         dialog.open();
+                        return;
                     }
                     
                     MessageBox dialog = new MessageBox(shell, SWT.OK);
