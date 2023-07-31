@@ -1,0 +1,23 @@
+{
+  "name": "email_organizer",
+  "version": "2.0.0",
+  "description": "- setup project\r - learn electron\r - build front end\r - port back backend logic\r - update readme\r - update license maybe\r - figure out build process\r - figure out mac os compatibility\r - document",
+  "main": "main.js",
+  "scripts": {
+    "start": "npx electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nox282/email_organizer.git"
+  },
+  "author": "Nox",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nox282/email_organizer/issues"
+  },
+  "homepage": "https://github.com/nox282/email_organizer#readme",
+  "devDependencies": {
+    "electron": "^25.3.2"
+  }
+}
