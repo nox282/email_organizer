@@ -18,6 +18,8 @@ const goButton = document.getElementById('goButton');
 
 const checkMark = document.getElementById('checkMark');
 
+const progressBar = document.getElementById('progressBar');
+
 // Request initial data when the DOM content is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.api.send('request-initial-data');
@@ -44,7 +46,7 @@ window.api.onOpenDirectory((event, path) => {
     if (path) {
         updateOutputFolderPath(path);
     }
-})
+});
 
 window.api.onFormDataHandled((event) => {
     checkMark.classList.add('show');
@@ -53,7 +55,11 @@ window.api.onFormDataHandled((event) => {
         // Hide the check mark
         checkMark.classList.remove('show');
     });
-})
+});
+
+window.api.onProgress((event, progress) => {
+    progressBar.value = progress * 100;
+});
 
 document.addEventListener('DOMContentLoaded', function () {
     // Listen for file input changes

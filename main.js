@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog, shell, ipcRenderer } = require('electron')
 const path = require('path');
 const url = require('url');
 const fs = require('fs');
@@ -9,6 +9,8 @@ const { sanitizeDataPayload } = require('./modules/inputSanitizer');
 const { formatFileName } = require('./modules/fileNameFormatter');
 const userData = require('./modules/userData');
 const { parseEmlFile } = require('./modules/emailParser');
+
+let mainWindow = {};
 
 const createWindow = () => {
     mainWindow = new BrowserWindow({
@@ -84,6 +86,7 @@ async function processFormData(dataPayload) {
         return;
     }
 
+    let count = 1;
     for (const inputFilePath of sanitizedDataPayload.inputFilePaths) {        
         // Detect the encoding of the file
         const encoding = chardet.detectFileSync(inputFilePath);
@@ -98,6 +101,9 @@ async function processFormData(dataPayload) {
         } catch (error) {
             console.log(error);
         }
+
+        mainWindow.webContents.send('on-progress', count / sanitizedDataPayload.inputFilePaths.length);
+        count++;
     }
 }
 

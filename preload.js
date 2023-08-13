@@ -13,4 +13,6 @@ contextBridge.exposeInMainWorld('api', {
   onInitialData: (callback) => ipcRenderer.on('initial-data', callback),
 
   onFormDataHandled: (callback) => ipcRenderer.on('form-data-handled', callback),
+
+  onProgress: (callback) => ipcRenderer.on('on-progress', callback),
 });
