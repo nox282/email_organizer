@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mail Organizer</title>
   <link href="bootstrap.min.css" rel="stylesheet">
-  <link href="styles.css" rel="stylesheet"> <!-- macOS-style CSS -->
+  <link href="styles.css" rel="stylesheet"> <!-- CSS de style macOS -->
 </head>
 <body>
 
@@ -15,9 +15,9 @@
         <form>
           <div class="section-container">
             <div class="section">
-              <h2>Input File Paths</h2>
+              <h2>Choisissez vos Mails</h2>
               <div id="inputFilePathsDropZone" class="drop-zone">
-                Drop files here
+                Glissez les mails ici
               </div>
               <input type="file" class="form-control" id="inputFilePaths" multiple>
               <div id="inputFilePathsDisplay"></div>
@@ -26,16 +26,16 @@
           
           <div class="section-container">
             <div class="section">
-              <h2>Destination Folder</h2>
-              <button type="button" class="btn btn-primary" id="outputFolderPath">Select Destination Folder</button>
+              <h2>Dossier de Destination</h2>
+              <button type="button" class="btn btn-primary" id="outputFolderPath">Sélectionner le Dossier de Destination</button>
               <div id="outputFolderPathDisplay"></div>
             </div>
           </div>
                   
           
           <div class="mb-3">
-            <label for="email" class="form-label">Your Email Address</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter your email address">
+            <label for="email" class="form-label">Adresse Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Entrez votre adresse email">
           </div>
           <button type="button" class="btn btn-primary" id="goButton">
             Go
