@@ -91,3 +91,15 @@ body {
   visibility: visible;
   opacity: 1;
 }
+
+.progress-bar {
+  visibility: hidden;
+  transition: visibility 0s, opacity 0.5s;
+  opacity: 0;
+  margin-left: 5px;
+}
+
+.progress-bar.show {
+  visibility: visible;
+  opacity: 1;
+}

@@ -49,6 +49,7 @@ window.api.onOpenDirectory((event, path) => {
 });
 
 window.api.onFormDataHandled((event) => {
+    progressBar.classList.remove('show');
     checkMark.classList.add('show');
     // Wait for a few seconds
     new Promise(resolve => setTimeout(resolve, 1500)).then(() => {
@@ -59,6 +60,11 @@ window.api.onFormDataHandled((event) => {
 
 window.api.onProgress((event, progress) => {
     progressBar.value = progress * 100;
+    if (progressBar.value > 0) {
+        progressBar.classList.add('show');
+    } else {
+        progressBar.classList.remove('show');
+    }
 });
 
 document.addEventListener('DOMContentLoaded', function () {
