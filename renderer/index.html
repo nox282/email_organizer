@@ -13,32 +13,34 @@
     <div class="row">
       <div class="col-md-6 offset-md-3">
         <form>
-          <div class="mb-3">
-            <label for="inputFilePaths" class="form-label">Input File Paths</label>
-            <div id="inputFilePathsDropZone" class="drop-zone">
-              Drop files here
+          <div class="section-container">
+            <div class="section">
+              <h2>Input File Paths</h2>
+              <div id="inputFilePathsDropZone" class="drop-zone">
+                Drop files here
+              </div>
+              <input type="file" class="form-control" id="inputFilePaths" multiple>
+              <div id="inputFilePathsDisplay"></div>
             </div>
-            <input type="file" class="form-control" id="inputFilePaths" multiple>
-            <div id="inputFilePathsDisplay"></div> <!-- Display selected paths here -->
           </div>
           
-          <div class="mb-3">
-            <label for="outputFolderPath" class="form-label">Destination Folder</label>
-            <div id="outputFolderPathDropZone" class="drop-zone">
-              Drop folder here
+          <div class="section-container">
+            <div class="section">
+              <h2>Destination Folder</h2>
+              <button type="button" class="btn btn-primary" id="outputFolderPath">Select Destination Folder</button>
+              <div id="outputFolderPathDisplay"></div>
             </div>
-            <input type="file" class="form-control" id="outputFolderPath" webkitdirectory directory>
-            <div id="outputFolderPathDisplay"></div> <!-- Display selected path here -->
           </div>
-          <div class="mb-3">
-            <label for="timezone" class="form-label">Your Timezone (GMT)</label>
-            <input type="number" class="form-control" id="timezone" placeholder="Enter your timezone offset">
-          </div>
+                  
+          
           <div class="mb-3">
             <label for="email" class="form-label">Your Email Address</label>
             <input type="email" class="form-control" id="email" placeholder="Enter your email address">
           </div>
-          <button type="button" class="btn btn-primary" id="goButton">Go</button>
+          <button type="button" class="btn btn-primary" id="goButton">
+            Go
+            <span class="check-mark" id="checkMark">✓</span>
+          </button>
         </form>
       </div>
     </div>
