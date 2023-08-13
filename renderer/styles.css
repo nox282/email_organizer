@@ -4,6 +4,20 @@ body {
   font-family: Arial, sans-serif;
 }
 
+/* Style for the remove icon */
+.remove-icon {
+  cursor: pointer;
+  color: #e74c3c;
+  margin-left: 5px;
+}
+
+/* Style for the file path entry */
+.file-path-entry {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
 .container {
   max-width: 600px;
   margin: 0 auto;
@@ -43,10 +57,37 @@ body {
   background-color: #e0e0e0;
 }
 
+/* Additional styling for sections */
+.section-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
 
-/* Adjust styles for smaller screens if needed */
-@media (max-width: 576px) {
-  .drop-zone {
-    padding: 10px;
-  }
+.section {
+  width: 100%;
+  max-width: 600px; /* Optional: limit the maximum width if needed */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.section h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.check-mark {
+  visibility: hidden;
+  transition: visibility 0s, opacity 0.5s;
+  opacity: 0;
+  margin-left: 5px;
+}
+
+.check-mark.show {
+  visibility: visible;
+  opacity: 1;
 }
