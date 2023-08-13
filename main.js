@@ -103,12 +103,17 @@ async function processFormData(dataPayload) {
 
 function copyFileWithNewName(sourceFilePath, destinationFolderPath, newName) {
     const extension = path.extname(sourceFilePath); // Get the file extension
-    const newFilePath = path.join(destinationFolderPath, `${newName}${extension}`);
+    let newFilePath = path.join(destinationFolderPath, `${newName}${extension}`);
 
     // Check if the destination file already exists
-    if (fs.existsSync(newFilePath)) {
-        console.log('Destination file already exists. Skipping copy.');
-        return;
+    let count = 0;
+    while (fs.existsSync(newFilePath)) {
+        count++;
+        if (count === 1) {
+            newFilePath = path.join(destinationFolderPath, `${newName} - copie${extension}`);
+        } else {
+            newFilePath = path.join(destinationFolderPath, `${newName} - copie ${count}${extension}`);
+        }
     }
 
     try {
